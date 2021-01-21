@@ -19,6 +19,9 @@ public class GameRun : MonoBehaviour
 	private int NUM_CLASSES     = 3;
 	private int DECK_SIZE       = 4;
 
+    private float AIscore;
+    private string rewardText;
+
 	// Rewards
 	private float RWD_ACTION_INVALID = -2.0f;
 	private float RWD_HAND_LOST      = -1.0f;
@@ -27,6 +30,9 @@ public class GameRun : MonoBehaviour
 
 	// Other UI elements
 	private UnityEngine.UI.Text textDeck;
+    private UnityEngine.UI.Text textTurns;
+    private UnityEngine.UI.Text textResult;
+    private UnityEngine.UI.Text textScore;
 
     // Start is called before the first frame update
     void Start()
@@ -47,8 +53,9 @@ public class GameRun : MonoBehaviour
         // UI management
         ///////////////////////////////////////
         textDeck = GameObject.Find("TextDeck").GetComponent<UnityEngine.UI.Text>();
-
-
+        textTurns = GameObject.Find("TextTurns").GetComponent<UnityEngine.UI.Text>();
+        textResult = GameObject.Find("TextResult").GetComponent<UnityEngine.UI.Text>();
+        textScore = GameObject.Find("TextScore").GetComponent<UnityEngine.UI.Text>();
         ///////////////////////////////////////
         // Game management
         ///////////////////////////////////////
@@ -98,7 +105,7 @@ public class GameRun : MonoBehaviour
    	  	// Determine label of the character, return it
    	  	int label = 0;
    	  	if(chars[idx].name.StartsWith("frog")) label = 1;
-   	  	else if(chars[idx].name.StartsWith("opposum")) label = 2;
+   	  	else if(chars[idx].name.StartsWith("oposum")) label = 2;
 
     	return label;
     } 
@@ -108,7 +115,7 @@ public class GameRun : MonoBehaviour
     {	
     	for(int turn=0; turn<100000; turn++) {
 
-	        ///////////////////////////////////////
+            ///////////////////////////////////////
 	        // Generate enemy cards
 	        ///////////////////////////////////////
 
@@ -156,8 +163,27 @@ public class GameRun : MonoBehaviour
 	        
 	        Debug.Log("Turn/reward: " + turn.ToString() + "->" + reward.ToString());
 
-	        agent.GetReward(reward);
+            agent.GetReward(reward);
 
+            AIscore += reward;
+            switch (reward)
+            {
+                case 1f:
+                    rewardText = "WIN";
+                    break;
+                case -2:
+                    rewardText = "LOSE";
+                    break;
+                case -0.1f:
+                    rewardText = "DRAW";
+                    break;
+            }
+
+            textTurns.text = "Turn: " + turn.ToString();
+            textResult.text = "Result: " + rewardText;
+            textScore.text = "AI Score: " + AIscore.ToString();
+
+            
 
 	        ///////////////////////////////////////
 	        // Manage turns/games
