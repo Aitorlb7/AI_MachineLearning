@@ -21,6 +21,10 @@ public class GameRun : MonoBehaviour
 
     private float AIscore;
     private string rewardText;
+    private float roundsWon;
+    private float gamesWon;
+    private float currentTurn;
+    private float currentGame = 1;
 
 	// Rewards
 	private float RWD_ACTION_INVALID = -2.0f;
@@ -33,12 +37,12 @@ public class GameRun : MonoBehaviour
     private UnityEngine.UI.Text textTurns;
     private UnityEngine.UI.Text textResult;
     private UnityEngine.UI.Text textScore;
+    private UnityEngine.UI.Text gamesScore;
+    private UnityEngine.UI.Text textGames;
 
     // Start is called before the first frame update
     void Start()
     {
-
-
         ///////////////////////////////////////
         // Sprite management
         ///////////////////////////////////////
@@ -56,6 +60,8 @@ public class GameRun : MonoBehaviour
         textTurns = GameObject.Find("TextTurns").GetComponent<UnityEngine.UI.Text>();
         textResult = GameObject.Find("TextResult").GetComponent<UnityEngine.UI.Text>();
         textScore = GameObject.Find("TextScore").GetComponent<UnityEngine.UI.Text>();
+        textGames = GameObject.Find("TextCurrentGames").GetComponent<UnityEngine.UI.Text>();
+        gamesScore = GameObject.Find("TextGames").GetComponent<UnityEngine.UI.Text>();
         ///////////////////////////////////////
         // Game management
         ///////////////////////////////////////
@@ -170,6 +176,7 @@ public class GameRun : MonoBehaviour
             {
                 case 1f:
                     rewardText = "WIN";
+                    roundsWon++;
                     break;
                 case -2:
                     rewardText = "LOSE";
@@ -179,19 +186,37 @@ public class GameRun : MonoBehaviour
                     break;
             }
 
-            textTurns.text = "Turn: " + turn.ToString();
+            if (turn % 15 == 0)
+            {
+                if (roundsWon >= 8)
+                {
+                    gamesWon++;
+                }
+                roundsWon = 0;
+            }
+            currentTurn++;
+
+
+            textTurns.text = "Turn: " + currentTurn.ToString();
             textResult.text = "Result: " + rewardText;
             textScore.text = "AI Score: " + AIscore.ToString();
+            gamesScore.text = "Games Won: " + gamesWon.ToString();
+            textGames.text = "Current Game: " + currentGame.ToString();
 
-            
+           
+            if (currentTurn % 15 == 0)
+            {
+                currentTurn = 0;
+                currentGame++;
+            }
 
-	        ///////////////////////////////////////
-	        // Manage turns/games
-	        ///////////////////////////////////////
+            ///////////////////////////////////////
+            // Manage turns/games
+            ///////////////////////////////////////
 
 
 
-	    	yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.1f);
 
     	}
 
